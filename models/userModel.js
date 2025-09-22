@@ -45,6 +45,21 @@ export async function getUserbyId(id){
     }
 }
 
+export async function deleteUser(userId){
+    try{
+        const query='update users set is_active=false where user_id=$1 returning user_id,is_active';
+        const values=[userId];
+        const res=await pool.query(query,values);
+        return res.rows[0];
+
+    }catch(err){
+        throw err;
+    }
+}
+
+(async ()=>{
+ const result =await deleteUser(12);
+})();
 
 
 
