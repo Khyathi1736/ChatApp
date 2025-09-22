@@ -90,7 +90,4 @@ export async function removeUser(userId) {
   }
 }
 
-(async ()=>{
-  const res=await removeUser(18);
-  console.log(res);
-})();
+
