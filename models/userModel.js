@@ -122,10 +122,6 @@ export async function deleteUser(userId) {
   }
 }
 
-(async ()=>{
- const res =await deleteUser(160);
- console.log(res);
-})();
 
 
 
