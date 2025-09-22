@@ -5,28 +5,28 @@ const saltRounds = 10;
 
 // to insert new user to database
 export async function createUser(userName, password) {
-    try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const query = `
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const query = `
       INSERT INTO users (user_name, password)
       VALUES ($1, $2)
       RETURNING user_id, user_name, created_at
     `;
-        const res = await pool.query(query, [userName, hashedPassword]);
-        return {
-            success: true,
-            error: false,
-            message: 'User created successfully',
-            data: res.rows[0]
-        };
-    } catch (err) {
-        return {
-            success: false,
-            error: true,
-            message: 'Error creating user: ' + err.message,
-            data: null
-        };
-    }
+    const res = await pool.query(query, [userName, hashedPassword]);
+    return {
+      success: true,
+      error: false,
+      message: 'User created successfully',
+      data: res.rows[0]
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: true,
+      message: 'Error creating user: ' + err.message,
+      data: null
+    };
+  }
 }
 
 // find user by username
@@ -62,7 +62,7 @@ export async function getUserByUsername(userName) {
 // find user by id
 export async function getUserById(id) {
   try {
-    const query = 'SELECT * FROM users WHERE user_id=$1';
+    const query = 'SELECT * FROM users WHERE user_id=$1 and is_active=TRUE';
     const res = await pool.query(query, [id]);
     if (!res.rows[0]) {
       return {
@@ -91,21 +91,22 @@ export async function getUserById(id) {
 // soft delete user
 export async function deleteUser(userId) {
   try {
-    const query = `
-      UPDATE users
-      SET is_active=false
-      WHERE user_id=$1
-      RETURNING user_id, is_active
-    `;
-    const res = await pool.query(query, [userId]);
-    if (!res.rows[0]) {
+    const isUserExist = await getUserById(userId);
+    if (!isUserExist.data) {
       return {
-        success: false,
-        error: true,
-        message: 'User not found or already inactive',
+        success: true,
+        error: false,
+        message: 'User not found',
         data: null
       };
     }
+    const query = `
+    UPDATE users
+    SET is_active=false
+    WHERE user_id=$1
+    RETURNING user_id, is_active
+    `;
+    const res = await pool.query(query, [userId]);
     return {
       success: true,
       error: false,
@@ -121,6 +122,7 @@ export async function deleteUser(userId) {
     };
   }
 }
+
 
 
 
