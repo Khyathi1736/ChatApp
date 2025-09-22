@@ -36,7 +36,7 @@ export async function getUserbyUsername(userName){
 // find user by id
 export async function getUserbyId(id){
     try{
-        const query='select * from users where id=$1';
+        const query='select * from users where user_id=$1';
         const values=[id];
         const res=await pool.query(query,values);
         return res.rows[0];
