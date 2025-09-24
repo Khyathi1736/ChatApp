@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { createUser, deleteUser, getUserByUsername } from '../models/userModel.js';
 
 // Signup new user
-export async function signup(username, password) {
+export async function signUp(username, password) {
   let success = true;
   let error = false;
   let message = 'Signup successful';
@@ -23,7 +23,7 @@ export async function signup(username, password) {
     // Create new user
     const user = await createUser(username, password);
     userData = { userId: user.data.user_id, username: user.data.user_name };
-    message = `Signup successful! Your ID: ${user.data.user_id}`;
+    message = `Signup successful. Your id is ${userData.userId}`;
 
     return { success, error, message, userData };
   } catch (err) {
@@ -39,7 +39,7 @@ export async function signup(username, password) {
 
 
 // Login existing user
-export async function signin(username, password) {
+export async function signIn(username, password) {
   let success = true;
   let error = false;
   let message = 'Success';
@@ -67,11 +67,14 @@ export async function signin(username, password) {
   }
 }
 
-export async function removeUser(userId) {
+export async function removeUser(userName,password) {
   try {
-    const result = await deleteUser(userId);
+    const result = await deleteUser(userName,password);
     if (result.message == 'User not found') {
       return { success: false, error: true, message: 'User not found', userData: null };
+    }
+    else if (result.message=='Wrong password'){
+      return { success: false, error: true, message: 'Wrong password', userData: null };
     }
     return {
       success: true,
@@ -89,5 +92,4 @@ export async function removeUser(userId) {
     };
   }
 }
-
 
