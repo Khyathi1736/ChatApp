@@ -89,10 +89,10 @@ export async function getUserById(id) {
 }
 
 // soft delete user
-export async function deleteUser(userId) {
+export async function deleteUser(userName,password) {
   try {
-    const isUserExist = await getUserById(userId);
-    if (!isUserExist.data) {
+    const user = await getUserByUsername(userName);
+    if (!user.data || !user.data.is_active) {
       return {
         success: true,
         error: false,
@@ -100,13 +100,22 @@ export async function deleteUser(userId) {
         data: null
       };
     }
+    const validatePassword=await bcrypt.compare(password,user.data.password);
+    if (!validatePassword){
+      return {
+        success: true,
+        error: false,
+        message: 'Wrong password',
+        data: null
+      };
+    }
     const query = `
     UPDATE users
     SET is_active=false
-    WHERE user_id=$1
-    RETURNING user_id, is_active
+    WHERE user_name=$1 
+    RETURNING user_id,user_name, is_active
     `;
-    const res = await pool.query(query, [userId]);
+    const res = await pool.query(query, [userName]);
     return {
       success: true,
       error: false,
@@ -122,6 +131,8 @@ export async function deleteUser(userId) {
     };
   }
 }
+
+
 
 
 
