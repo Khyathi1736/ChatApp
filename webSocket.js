@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws';
 import { sendMessage, fetchMessagesByroomId, removeMessage } from './controllers/chatController.js';
+import { joinRoom } from './controllers/roomController.js';
 
 let clients = {}; // { roomId1: [ws1, ws2], roomId2: [ws3] }
 
