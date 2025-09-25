@@ -91,7 +91,3 @@ export async function removeMessage(messageId, userId) {
   }
 }
 
-(async ()=>{
-    const res=await removeMessage(20,1);
-    console.log(res);
-})();
